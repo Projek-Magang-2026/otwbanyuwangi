@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="kw-sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E3A8A"/>
+      <stop offset="45%" stop-color="#38BDF8"/>
+      <stop offset="80%" stop-color="#BAE6FD"/>
+      <stop offset="100%" stop-color="#FDF4DC"/>
+    </linearGradient>
+    <linearGradient id="hill-g1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#65A30D"/>
+      <stop offset="100%" stop-color="#3F6212"/>
+    </linearGradient>
+    <linearGradient id="hill-g2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#84CC16"/>
+      <stop offset="100%" stop-color="#4D7C0F"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="800" height="380" fill="url(#kw-sky)"/>
+
+  <!-- Distant Ijen Caldera Wall Mountains -->
+  <path d="M0 320 L150 250 L350 290 L520 220 L720 270 L800 240 L800 380 L0 380 Z" fill="#3B5D4E" opacity="0.4"/>
+
+  <!-- Rolling Highland Green Hills (Bukit Teletubbies Wurung) -->
+  <path d="M-50 450 Q180 320 400 410 T850 360 L850 600 L-50 600 Z" fill="#4D7C0F"/>
+  <path d="M120 600 Q360 380 620 460 T900 440 L900 600 Z" fill="url(#hill-g1)"/>
+  <path d="M-80 600 Q200 440 450 500 T900 520 L900 600 Z" fill="url(#hill-g2)"/>
+
+  <!-- Walking track along the hill crest (Bantengan) -->
+  <path d="M80 540 Q280 470 480 500 T760 530" stroke="#FDE68A" stroke-width="4" stroke-dasharray="8 6" fill="none" opacity="0.8"/>
+
+  <!-- Cyclist / Hikers silhouette -->
+  <g transform="translate(480, 480) scale(0.65)" fill="#18352B">
+    <circle cx="20" cy="10" r="5"/>
+    <rect x="18" y="16" width="6" height="15"/>
+    <line x1="20" y1="31" x2="12" y2="44" stroke="#18352B" stroke-width="3"/>
+    <line x1="22" y1="31" x2="30" y2="44" stroke="#18352B" stroke-width="3"/>
+  </g>
+
+  <!-- Badge -->
+  <rect x="30" y="30" width="220" height="36" rx="18" fill="#18352B" fill-opacity="0.85"/>
+  <circle cx="50" cy="48" r="5" fill="#84CC16"/>
+  <text x="65" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" letter-spacing="1" fill="#F7F4EC">BUKIT KAWAH WURUNG</text>
+</svg>

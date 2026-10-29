@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="pm-sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4C1D95"/>
+      <stop offset="35%" stop-color="#BE185D"/>
+      <stop offset="65%" stop-color="#E58B55"/>
+      <stop offset="100%" stop-color="#FDE047"/>
+    </linearGradient>
+    <linearGradient id="pm-sea" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E58B55"/>
+      <stop offset="50%" stop-color="#B45309"/>
+      <stop offset="100%" stop-color="#1E293B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sunset Sky -->
+  <rect width="800" height="420" fill="url(#pm-sky)"/>
+
+  <!-- Golden Sun setting behind island -->
+  <circle cx="400" cy="360" r="75" fill="#FEF08A"/>
+
+  <!-- Iconic Hill / Island of Pulau Merah (Red Island) -->
+  <path d="M260 420 C300 340 330 250 390 230 C450 210 490 320 540 420 Z" fill="#451A03"/>
+
+  <!-- Sunset Sea & Reflection -->
+  <rect y="400" width="800" height="200" fill="url(#pm-sea)"/>
+  <ellipse cx="400" cy="450" rx="90" ry="15" fill="#FEF08A" opacity="0.6"/>
+  <ellipse cx="400" cy="480" rx="140" ry="12" fill="#FDE047" opacity="0.4"/>
+
+  <!-- Wet Beach Sand reflection -->
+  <path d="M0 600 L0 520 C200 500 400 490 600 510 C700 520 750 530 800 540 L800 600 Z" fill="#291F1D"/>
+
+  <!-- Surfer walking with board silhouette -->
+  <g transform="translate(180, 480) scale(0.9)" fill="#FDE047">
+    <circle cx="30" cy="20" r="5"/>
+    <rect x="27" y="25" width="7" height="25" rx="2"/>
+    <!-- Surfboard -->
+    <path d="M22 15 C20 30 20 50 25 65 C28 50 28 30 25 15 Z" fill="#E58B55"/>
+    <line x1="27" y1="50" x2="22" y2="70" stroke="#FDE047" stroke-width="2"/>
+    <line x1="33" y1="50" x2="38" y2="70" stroke="#FDE047" stroke-width="2"/>
+  </g>
+
+  <!-- Waves Crests -->
+  <path d="M0 480 Q100 470 200 485 T400 480 T600 485 T800 480" stroke="#FFFFFF" stroke-width="2" fill="none" opacity="0.6"/>
+  <path d="M0 520 Q120 510 240 522 T480 518 T720 522 T800 519" stroke="#FEF08A" stroke-width="1.5" fill="none" opacity="0.4"/>
+
+  <!-- Badge -->
+  <rect x="30" y="30" width="220" height="36" rx="18" fill="#451A03" fill-opacity="0.85"/>
+  <circle cx="50" cy="48" r="5" fill="#E58B55"/>
+  <text x="65" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" letter-spacing="1" fill="#F7F4EC">PANTAI PULAU MERAH</text>
+</svg>

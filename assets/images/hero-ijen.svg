@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#142621"/>
+      <stop offset="40%" stop-color="#234A3A"/>
+      <stop offset="70%" stop-color="#E58B55"/>
+      <stop offset="100%" stop-color="#FDF1DF"/>
+    </linearGradient>
+    <linearGradient id="lake" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1ABBA9"/>
+      <stop offset="50%" stop-color="#2DD4BF"/>
+      <stop offset="100%" stop-color="#0F766E"/>
+    </linearGradient>
+    <linearGradient id="mountain-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E392F"/>
+      <stop offset="100%" stop-color="#18352B"/>
+    </linearGradient>
+    <linearGradient id="mountain-fg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#183027"/>
+      <stop offset="100%" stop-color="#0E1E18"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF5EA"/>
+      <stop offset="60%" stop-color="#E58B55" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#E58B55" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Sky & Sunrise -->
+  <rect width="1200" height="800" fill="url(#sky)"/>
+  <circle cx="820" cy="420" r="140" fill="url(#sun)"/>
+
+  <!-- Distant Volcanoes -->
+  <path d="M700 480 L880 340 L1060 480 Z" fill="#2E5A47" opacity="0.6"/>
+  <path d="M850 480 L980 380 L1150 480 Z" fill="#244939" opacity="0.5"/>
+
+  <!-- Crater Ridge Left -->
+  <path d="M-50 800 L-20 400 L250 460 L480 520 L620 590 L750 630 L850 660 L1250 800 Z" fill="url(#mountain-bg)"/>
+
+  <!-- Turquoise Crater Lake -->
+  <ellipse cx="620" cy="590" rx="360" ry="110" fill="url(#lake)"/>
+  <ellipse cx="610" cy="585" rx="280" ry="75" fill="#5EEAD4" opacity="0.4"/>
+
+  <!-- Sulfur Smoke plume -->
+  <path d="M420 570 C400 520 440 480 430 430 C420 380 470 340 460 290 C500 330 520 400 490 470 C470 520 460 560 420 570 Z" fill="#FFF9D2" opacity="0.55"/>
+  <path d="M440 560 C430 520 460 470 450 430 C480 460 490 510 470 560 Z" fill="#FEF08A" opacity="0.7"/>
+
+  <!-- Foreground Caldera Clifftops -->
+  <path d="M-20 800 L120 540 L380 620 L580 710 L720 740 L1220 800 Z" fill="url(#mountain-fg)"/>
+  <path d="M820 800 L950 640 L1220 580 L1250 800 Z" fill="url(#mountain-fg)"/>
+
+  <!-- Tiny Hiker Silhouette on Ridge -->
+  <circle cx="210" cy="552" r="5" fill="#E58B55"/>
+  <rect x="207" y="557" width="6" height="15" rx="2" fill="#E58B55"/>
+  <line x1="215" y1="559" x2="220" y2="575" stroke="#E58B55" stroke-width="2"/>
+
+  <!-- Badge Overlay -->
+  <rect x="60" y="60" width="260" height="42" rx="21" fill="#18352B" fill-opacity="0.85"/>
+  <circle cx="82" cy="81" r="6" fill="#E58B55"/>
+  <text x="100" y="86" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="700" letter-spacing="1" fill="#F7F4EC">KAWAH IJEN BLUE FIRE</text>
+</svg>

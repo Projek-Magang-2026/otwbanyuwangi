@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="dja-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#142C23"/>
+      <stop offset="50%" stop-color="#1E3E32"/>
+      <stop offset="100%" stop-color="#2D5847"/>
+    </linearGradient>
+    <linearGradient id="ray-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#FEF08A" stop-opacity="0.0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Forest Tone -->
+  <rect width="800" height="600" fill="url(#dja-bg)"/>
+
+  <!-- Sun Rays Through Canopy -->
+  <polygon points="150,0 220,0 420,600 280,600" fill="url(#ray-grad)"/>
+  <polygon points="350,0 450,0 680,600 520,600" fill="url(#ray-grad)"/>
+  <polygon points="550,0 620,0 780,500 700,600" fill="url(#ray-grad)"/>
+
+  <!-- Distant Trembesi Trees -->
+  <g fill="#18352B" opacity="0.6">
+    <path d="M120 600 C130 400 140 250 150 100 C200 120 280 160 320 220 C240 250 200 350 210 600 Z"/>
+    <path d="M620 600 C610 400 600 240 590 100 C550 140 480 180 440 240 C500 270 540 370 530 600 Z"/>
+  </g>
+
+  <!-- Main Trembesi Tree Trunk (Lord of the Rings Forest Vibe) -->
+  <path d="M340 600 C360 420 370 300 380 180 C320 160 250 140 180 160 C260 220 330 260 350 360 C360 460 310 540 280 600 Z" fill="#11241C"/>
+  <path d="M420 600 C400 440 410 320 420 180 C480 150 560 140 640 170 C570 230 490 270 460 380 C440 470 480 540 520 600 Z" fill="#0C1B15"/>
+
+  <!-- Hanging Ferns & Epiphytes (Paku Sarang & Moss) -->
+  <g fill="#437855" stroke="#2D5847" stroke-width="2">
+    <!-- Epiphyte cluster 1 -->
+    <ellipse cx="370" cy="240" rx="35" ry="18"/>
+    <path d="M350 250 Q340 290 335 320 M365 255 Q365 305 360 335 M385 250 Q395 295 400 325" stroke="#376748" stroke-width="3" fill="none"/>
+    <!-- Epiphyte cluster 2 -->
+    <ellipse cx="430" cy="220" rx="40" ry="20"/>
+    <path d="M410 230 Q405 280 395 310 M435 235 Q445 290 450 330 M455 230 Q475 285 480 315" stroke="#376748" stroke-width="3" fill="none"/>
+    <!-- Upper branch foliage -->
+    <ellipse cx="220" cy="150" rx="90" ry="40" fill="#29513B"/>
+    <ellipse cx="580" cy="160" rx="100" ry="45" fill="#29513B"/>
+    <ellipse cx="400" cy="120" rx="120" ry="50" fill="#224431"/>
+  </g>
+
+  <!-- Green Ground Forest Floor & Pathways -->
+  <path d="M0 600 C150 570 300 560 400 560 C550 560 700 580 800 600 Z" fill="#1C382A"/>
+  <path d="M350 600 L380 560 L420 560 L450 600 Z" fill="#786B52" opacity="0.6"/>
+
+  <!-- Small Visitor Silhouette on Pathway -->
+  <circle cx="400" cy="535" r="4" fill="#E58B55"/>
+  <rect x="398" y="539" width="4" height="12" rx="1" fill="#E58B55"/>
+
+  <!-- Badge -->
+  <rect x="30" y="30" width="220" height="36" rx="18" fill="#142C23" fill-opacity="0.85"/>
+  <circle cx="50" cy="48" r="5" fill="#4ADE80"/>
+  <text x="65" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" letter-spacing="1" fill="#F7F4EC">HUTAN DE DJAWATAN</text>
+</svg>

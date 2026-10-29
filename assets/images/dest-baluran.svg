@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="bal-sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4B7763"/>
+      <stop offset="50%" stop-color="#84A58D"/>
+      <stop offset="75%" stop-color="#EAA66E"/>
+      <stop offset="100%" stop-color="#FDF3E7"/>
+    </linearGradient>
+    <linearGradient id="bal-ground" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#C29E65"/>
+      <stop offset="40%" stop-color="#A57F48"/>
+      <stop offset="100%" stop-color="#674E2C"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="800" height="600" fill="url(#bal-sky)"/>
+
+  <!-- Baluran Volcano Silhouette -->
+  <path d="M120 420 L380 260 L440 270 L680 420 Z" fill="#2E4A3B" opacity="0.6"/>
+  <path d="M220 420 L400 300 L560 420 Z" fill="#223B2F" opacity="0.8"/>
+
+  <!-- Savana Plains -->
+  <rect y="400" width="800" height="200" fill="url(#bal-ground)"/>
+
+  <!-- Acacia Tree Left (Signature Baluran tree) -->
+  <path d="M180 470 C185 430 190 390 195 340 L210 340 C205 390 200 430 205 470 Z" fill="#3D2918"/>
+  <!-- Flat Umbrella Canopy -->
+  <ellipse cx="200" cy="330" rx="90" ry="25" fill="#38523A"/>
+  <ellipse cx="230" cy="315" rx="70" ry="20" fill="#4B694D"/>
+  <ellipse cx="170" cy="320" rx="60" ry="18" fill="#283C2A"/>
+
+  <!-- Acacia Tree Far Right -->
+  <path d="M640 430 L646 380 L652 380 L650 430 Z" fill="#3D2918"/>
+  <ellipse cx="648" cy="375" rx="45" ry="14" fill="#38523A"/>
+
+  <!-- Deer / Banteng Silhouettes -->
+  <path d="M480 440 L495 440 L498 430 L503 425 L505 422 L508 424 L506 432 L502 438 L503 448 L500 458 L496 458 L496 448 L488 448 L488 458 L484 458 L484 445 Z" fill="#291D11"/>
+  <path d="M520 445 L532 445 L534 437 L538 433 L540 430 L543 432 L541 438 L538 443 L539 452 L536 458 L533 458 L533 450 L527 450 L527 458 L524 458 L524 448 Z" fill="#291D11" transform="scale(0.8) translate(140, 110)"/>
+
+  <!-- Foreground Grass blades -->
+  <path d="M20 600 L30 540 L40 600 M80 600 L95 530 L110 600 M320 600 L335 550 L350 600 M680 600 L700 535 L720 600" stroke="#7A5A30" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Destination Label -->
+  <rect x="30" y="30" width="230" height="36" rx="18" fill="#18352B" fill-opacity="0.85"/>
+  <circle cx="50" cy="48" r="5" fill="#E58B55"/>
+  <text x="65" y="52" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" letter-spacing="1" fill="#F7F4EC">TAMAN NASIONAL BALURAN</text>
+</svg>
