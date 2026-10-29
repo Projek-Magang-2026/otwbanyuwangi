@@ -13,19 +13,29 @@
 const CONTACT_CONFIG = {
   brandName: 'OTW BANYUWANGI',
   brandTagline: 'Open Trip Weekend Banyuwangi',
-  // Placeholder WhatsApp (Ganti dengan nomor WhatsApp resmi)
+  // Nomor WhatsApp resmi (Ganti dengan nomor WhatsApp aktif, format 62...)
   whatsappNumber: '6281234567890',
-  // Placeholder Email (Ganti dengan email resmi)
+  defaultChatMessage: 'Halo OTW Banyuwangi, saya ingin bertanya mengenai paket wisata.',
+  // Email resmi
   email: 'info@otwbanyuwangi.placeholder',
   operationalHours: 'Setiap Hari: 07.00 - 21.00 WIB',
   baseLocation: 'Banyuwangi Kota, Jawa Timur (Dekat Stasiun Banyuwangi Kota / Karangasem)',
+
+  // Konfigurasi tautan media sosial resmi (Placeholder dapat diganti saat akun resmi tersedia)
+  social: {
+    youtube: 'https://youtube.com/@otwbanyuwangi.placeholder',
+    tiktok: 'https://tiktok.com/@otwbanyuwangi.placeholder',
+    instagram: 'https://instagram.com/otwbanyuwangi.placeholder',
+    whatsapp: 'https://wa.me/6281234567890?text=Halo%20OTW%20Banyuwangi%2C%20saya%20ingin%20bertanya%20mengenai%20paket%20wisata.'
+  },
   
   /**
    * Menghasilkan URL WhatsApp dengan pesan yang sudah di-encode
    */
   getWhatsAppUrl(message) {
     const cleanNumber = this.whatsappNumber.replace(/[^0-9]/g, '');
-    const encodedMessage = encodeURIComponent(message.trim());
+    const textToSend = message ? message.trim() : this.defaultChatMessage;
+    const encodedMessage = encodeURIComponent(textToSend);
     return `https://wa.me/${cleanNumber}?text=${encodedMessage}`;
   }
 };
@@ -694,7 +704,6 @@ function initPackageDetailRenderer() {
       <div class="detail-summary-card">
         <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem;">
           <span class="badge badge-forest">${escapeHtml(pkg.categoryLabel)}</span>
-          <span class="badge badge-sample">Data Contoh / PKL</span>
         </div>
 
         <h1 style="font-size: clamp(1.5rem, 2.5vw, 2.2rem); margin-bottom: 0.75rem;">${escapeHtml(pkg.title)}</h1>
@@ -718,11 +727,11 @@ function initPackageDetailRenderer() {
         <div class="detail-price-box">
           <span class="meta-pill-label">Estimasi Biaya Paket (Contoh)</span>
           <div class="price-tag">${escapeHtml(pkg.price)} <span style="font-size: 0.9rem; font-weight: 500; color: var(--color-muted);">${escapeHtml(pkg.priceUnit)}</span></div>
-          <div class="price-note">*Biaya tertera adalah data percontohan PKL. Silakan hubungi admin untuk kuota aktual.</div>
+          <div class="price-note">*Biaya dapat disesuaikan dengan kuota rombongan aktual. Silakan hubungi admin.</div>
         </div>
 
         <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg" style="width: 100%;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          <svg width="20" height="20" viewBox="0 0 448 512" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
           Konsultasi & Reservasi via WhatsApp
         </a>
       </div>
@@ -986,7 +995,7 @@ function initContactForm() {
           Karena website ini berjalan di sisi klien (frontend statis), silakan klik tombol di bawah untuk melanjutkan dan mengirim pesan langsung ke WhatsApp admin kami.
         </p>
         <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp" style="display: inline-flex;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          <svg width="18" height="18" viewBox="0 0 448 512" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
           Buka & Kirim Pesan di WhatsApp
         </a>
       `;
