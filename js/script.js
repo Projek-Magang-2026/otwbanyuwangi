@@ -796,7 +796,7 @@ function initPackageDetailRenderer() {
           </a>
         </div>
 
-        <div style="background-color: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 1.5rem;">
+        <div style="background-color: var(--color-white); border: 1px solid var(--color-border-card); border-radius: var(--radius-card); padding: 1.65rem; box-shadow: var(--shadow-subtle);">
           <h4 style="font-size: 1.05rem; margin-bottom: 0.75rem;">Paket Lainnya</h4>
           <ul style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem;">
             ${Object.values(PACKAGES_DATA).filter(p => p.slug !== pkg.slug).map(other => `
