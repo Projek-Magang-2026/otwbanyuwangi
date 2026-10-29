@@ -17,15 +17,15 @@ const CONTACT_CONFIG = {
   whatsappNumber: '6281234567890',
   defaultChatMessage: 'Halo OTW Banyuwangi, saya ingin bertanya mengenai paket wisata.',
   // Email resmi
-  email: 'info@otwbanyuwangi.placeholder',
+  email: 'info@otwbanyuwangi.com',
   operationalHours: 'Setiap Hari: 07.00 - 21.00 WIB',
   baseLocation: 'Banyuwangi Kota, Jawa Timur (Dekat Stasiun Banyuwangi Kota / Karangasem)',
 
-  // Konfigurasi tautan media sosial resmi (Placeholder dapat diganti saat akun resmi tersedia)
+  // Konfigurasi tautan media sosial resmi
   social: {
-    youtube: 'https://youtube.com/@otwbanyuwangi.placeholder',
-    tiktok: 'https://tiktok.com/@otwbanyuwangi.placeholder',
-    instagram: 'https://instagram.com/otwbanyuwangi.placeholder',
+    youtube: 'https://youtube.com/@otwbanyuwangi',
+    tiktok: 'https://tiktok.com/@otwbanyuwangi',
+    instagram: 'https://instagram.com/otwbanyuwangi',
     whatsapp: 'https://wa.me/6281234567890?text=Halo%20OTW%20Banyuwangi%2C%20saya%20ingin%20bertanya%20mengenai%20paket%20wisata.'
   },
   
@@ -491,9 +491,11 @@ const GALLERY_DATA = [
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
+  initActiveNavScroll();
   initWhatsAppButtons();
   initCatalogFilters();
-  initPackageDetailRenderer();
+  initPackageToggle();
+  initPackageModal();
   initGalleryLightbox();
   initContactForm();
   initImageFallbackHandler();
@@ -562,6 +564,38 @@ function initMobileNav() {
 }
 
 /* ==========================================================================
+   5B. ACTIVE NAVBAR LINK ON SCROLL (Single-Page Navigation)
+   ========================================================================== */
+function initActiveNavScroll() {
+  const sections = document.querySelectorAll('section[id], header[id], main > section[id]');
+  const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+  if (sections.length === 0 || navLinks.length === 0) return;
+
+  const onScroll = () => {
+    const scrollPos = window.scrollY + 140;
+    sections.forEach(sec => {
+      const top = sec.offsetTop;
+      const height = sec.offsetHeight;
+      const id = sec.getAttribute('id');
+      if (scrollPos >= top && scrollPos < top + height) {
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === `#${id}`) {
+            link.classList.add('active');
+            link.setAttribute('aria-current', 'page');
+          } else {
+            link.classList.remove('active');
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+    });
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
+/* ==========================================================================
    6. GLOBAL WHATSAPP CONSULTATION HANDLER
    ========================================================================== */
 function initWhatsAppButtons() {
@@ -581,7 +615,7 @@ function initWhatsAppButtons() {
    7. KATALOG PAKET FILTER (paket.html)
    ========================================================================== */
 function initCatalogFilters() {
-  const filterContainer = document.querySelector('.filter-bar');
+  const filterContainer = document.querySelector('.package-filter-bar, .filter-bar:not(.gallery-filter-bar)');
   const packageCards = document.querySelectorAll('.packages-quad-grid .trip-card, .packages-grid .package-card');
   const filterCountEl = document.querySelector('.filter-status-count');
   if (!filterContainer || packageCards.length === 0) return;
@@ -614,328 +648,227 @@ function initCatalogFilters() {
 }
 
 /* ==========================================================================
-   8. DYNAMIC PACKAGE DETAIL RENDERER (detail-paket.html)
+   7C. TOGGLE MORE PACKAGES (Simplified View)
    ========================================================================== */
-function initPackageDetailRenderer() {
-  const detailContainer = document.getElementById('detail-package-app');
-  if (!detailContainer) return;
+function initPackageToggle() {
+  const toggleBtn = document.getElementById('toggle-more-packages');
+  const extraCards = document.querySelectorAll('.trip-card-extra');
+  if (!toggleBtn || extraCards.length === 0) return;
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const packageSlug = (urlParams.get('paket') || '').toLowerCase().trim();
-  const pkg = PACKAGES_DATA[packageSlug];
+  toggleBtn.addEventListener('click', () => {
+    const isShowing = extraCards[0].classList.contains('visible');
+    extraCards.forEach(card => card.classList.toggle('visible', !isShowing));
+    toggleBtn.innerHTML = !isShowing
+      ? 'Tampilkan Lebih Ringkas'
+      : `Lihat Semua Paket (${extraCards.length + 3}) <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
+  });
+}
 
-  if (!pkg) {
-    // Tampilan ramah 404 jika parameter URL tidak cocok
-    detailContainer.innerHTML = `
-      <div class="empty-state-card">
-        <span class="trip-badge trip-badge-warm" style="margin-bottom: 1.25rem;">Paket Tidak Ditemukan</span>
-        <h2 style="font-family: var(--font-serif); color: #173F35; margin-bottom: 0.75rem;">Maaf, Paket Wisata Belum Tersedia</h2>
-        <p style="color: #687A72; margin-bottom: 2rem; max-width: 480px; margin-inline: auto;">
-          Paket wisata dengan kode <code>"${escapeHtml(packageSlug || 'kosong')}"</code> tidak ditemukan dalam katalog OTW BANYUWANGI.
-        </p>
-        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-          <a href="paket.html" class="btn btn-primary">Lihat Seluruh Paket Wisata</a>
-          <a href="kontak.html" class="btn btn-outline" style="border-color: #173F35; color: #173F35;">Tanyakan ke Admin</a>
+/* ==========================================================================
+   7B. PACKAGE DETAIL MODAL (Single-Page Experience)
+   ========================================================================== */
+function initPackageModal() {
+  const modal = document.getElementById('package-detail-modal');
+  if (!modal) return;
+
+  const modalBody = document.getElementById('modal-package-body');
+  const modalBadge = document.getElementById('modal-package-badge');
+  const modalLoc = document.getElementById('modal-package-location');
+  const modalPrice = document.getElementById('modal-package-price');
+  const modalWaBtn = document.getElementById('modal-package-wa-btn');
+  const closeBtns = modal.querySelectorAll('.package-modal-close, .package-modal-close-btn');
+
+  function openPackage(slug) {
+    const pkg = PACKAGES_DATA[slug];
+    if (!pkg) return;
+
+    if (modalBadge) {
+      modalBadge.textContent = pkg.categoryLabel || 'PAKET WISATA';
+      modalBadge.className = `trip-badge ${pkg.category === 'open-trip' ? 'trip-badge-forest' : 'trip-badge-warm'}`;
+    }
+    if (modalLoc) {
+      modalLoc.textContent = pkg.location || 'Banyuwangi';
+    }
+    if (modalPrice) {
+      modalPrice.innerHTML = `${escapeHtml(pkg.price)} <span class="price-unit">${escapeHtml(pkg.priceUnit)}</span>`;
+    }
+
+    const waMsg = `Halo ${CONTACT_CONFIG.brandName}, saya ingin konsultasi & pemesanan paket: "${pkg.title}". Mohon info jadwal terdekat dan ketersediaan kuotanya.`;
+    if (modalWaBtn) {
+      modalWaBtn.href = CONTACT_CONFIG.getWhatsAppUrl(waMsg);
+    }
+
+    const highlightsHtml = (pkg.highlights || []).map(item => `
+      <li class="detail-feature-item">
+        <div class="feature-icon-box" aria-hidden="true">
+          <svg class="facility-icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <span>${escapeHtml(item)}</span>
+      </li>
+    `).join('');
+
+    const timelineHtml = (pkg.itinerary || []).map(step => `
+      <div class="timeline-item">
+        <div class="timeline-marker" aria-hidden="true"></div>
+        <div class="timeline-content">
+          <div class="timeline-time">${escapeHtml(step.time)}</div>
+          <h4 class="timeline-title">${escapeHtml(step.title)}</h4>
+          <p class="timeline-desc">${escapeHtml(step.desc)}</p>
         </div>
       </div>
-    `;
-    document.title = 'Paket Tidak Ditemukan — OTW BANYUWANGI';
-    return;
-  }
+    `).join('');
 
-  // Update page title
-  document.title = `${pkg.title} — OTW BANYUWANGI`;
-
-  const highlightsHtml = (pkg.highlights || []).map(item => `
-    <li class="detail-feature-item">
-      <div class="feature-icon-box" aria-hidden="true">
-        <svg class="facility-icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
-      <span>${escapeHtml(item)}</span>
-    </li>
-  `).join('');
-
-  const itineraryHtml = (pkg.itinerary || []).map(step => `
-    <div class="timeline-item">
-      <div class="timeline-marker" aria-hidden="true"></div>
-      <div class="timeline-content">
-        <div class="timeline-time">${escapeHtml(step.time)}</div>
-        <h4 class="timeline-title">${escapeHtml(step.title)}</h4>
-        <p class="timeline-desc">${escapeHtml(step.desc)}</p>
-      </div>
-    </div>
-  `).join('');
-
-  const includesHtml = (pkg.includes || []).map(inc => `
-    <li class="facility-item">
-      <div class="facility-icon-wrap include-icon" aria-hidden="true">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
-      <span>${escapeHtml(inc)}</span>
-    </li>
-  `).join('');
-
-  const excludesHtml = (pkg.excludes || []).map(exc => `
-    <li class="facility-item">
-      <div class="facility-icon-wrap exclude-icon" aria-hidden="true">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </div>
-      <span>${escapeHtml(exc)}</span>
-    </li>
-  `).join('');
-
-  const preparationHtml = (pkg.preparation || []).map(tip => `
-    <li class="preparation-item">
-      <span class="prep-bullet" aria-hidden="true">•</span>
-      <span>${escapeHtml(tip)}</span>
-    </li>
-  `).join('');
-
-  const waBookingMessage = `Halo ${CONTACT_CONFIG.brandName}, saya ingin konsultasi & pemesanan paket: "${pkg.title}". Mohon info jadwal terdekat dan ketersediaan kuotanya.`;
-  const waUrl = CONTACT_CONFIG.getWhatsAppUrl(waBookingMessage);
-
-  detailContainer.innerHTML = `
-    <!-- 1. Breadcrumb Sederhana -->
-    <nav class="detail-breadcrumb" aria-label="Breadcrumb">
-      <a href="index.html" class="breadcrumb-link">Beranda</a>
-      <span class="breadcrumb-separator" aria-hidden="true">/</span>
-      <a href="paket.html" class="breadcrumb-link">Paket Wisata</a>
-      <span class="breadcrumb-separator" aria-hidden="true">/</span>
-      <span class="breadcrumb-current" aria-current="page">${escapeHtml(pkg.title)}</span>
-    </nav>
-
-    <!-- 2. Area Atas (Two-Column Hero & Summary) -->
-    <div class="detail-hero-layout">
-      <!-- Kolom Kiri: Galeri Foto Utama & Thumbnails -->
-      <div class="detail-gallery-showcase">
-        <div class="detail-gallery-viewport">
-          <img id="detail-main-img" src="${escapeHtml(pkg.image)}" alt="${escapeHtml(pkg.title)}" loading="eager" />
+    const includesHtml = (pkg.includes || []).map(inc => `
+      <li class="facility-item">
+        <div class="facility-icon-wrap include-icon" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </div>
-        ${pkg.heroImage ? `
-          <div class="detail-gallery-thumbs" aria-label="Pratinjau Foto Destinasi">
-            <button type="button" class="gallery-thumb-btn active" data-img-src="${escapeHtml(pkg.image)}" aria-label="Lihat foto utama ${escapeHtml(pkg.title)}">
-              <img src="${escapeHtml(pkg.image)}" alt="Thumbnail foto utama" />
-              <span class="thumb-label">Foto Utama</span>
-            </button>
-            <button type="button" class="gallery-thumb-btn" data-img-src="${escapeHtml(pkg.heroImage)}" aria-label="Lihat pemandangan lanskap">
-              <img src="${escapeHtml(pkg.heroImage)}" alt="Thumbnail pemandangan alam" />
-              <span class="thumb-label">Lanskap</span>
-            </button>
-          </div>
-        ` : ''}
-      </div>
+        <span>${escapeHtml(inc)}</span>
+      </li>
+    `).join('');
 
-      <!-- Kolom Kanan: Detail Informasi & Harga -->
-      <div class="detail-overview-card">
+    const excludesHtml = (pkg.excludes || []).map(exc => `
+      <li class="facility-item">
+        <div class="facility-icon-wrap exclude-icon" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </div>
+        <span>${escapeHtml(exc)}</span>
+      </li>
+    `).join('');
+
+    const prepHtml = (pkg.preparation || []).map(p => `
+      <li class="preparation-item">
+        <span class="prep-bullet" aria-hidden="true">•</span>
+        <span>${escapeHtml(p)}</span>
+      </li>
+    `).join('');
+
+    if (modalBody) {
+      modalBody.innerHTML = `
         <div class="detail-header-tags">
-          <span class="trip-badge ${pkg.category === 'multihari' ? 'trip-badge-warm' : 'trip-badge-forest'}">
-            ${escapeHtml(pkg.categoryLabel || 'Open Trip')}
-          </span>
-          <span class="detail-location-pill">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-            ${escapeHtml((pkg.location || '').split(',')[0])}
-          </span>
+          <h3 id="modal-package-title" class="detail-title-main" style="margin-bottom: 0.5rem; font-size: clamp(1.35rem, 2.5vw, 1.85rem);">
+            ${escapeHtml(pkg.title)}
+          </h3>
+          <p class="detail-summary-lead" style="margin-bottom: 1.25rem;">
+            ${escapeHtml(pkg.summary)}
+          </p>
         </div>
 
-        <h1 class="detail-title-main">${escapeHtml(pkg.title)}</h1>
-        <p class="detail-summary-lead">${escapeHtml(pkg.summary)}</p>
+        <div style="border-radius: var(--radius-sm); overflow: hidden; max-height: 320px; aspect-ratio: 16/9; background-color: var(--color-deep-forest);">
+          <img src="${escapeHtml(pkg.heroImage || pkg.image)}" alt="${escapeHtml(pkg.title)}" style="width: 100%; height: 100%; object-fit: cover;" />
+        </div>
 
-        <!-- Ringkasan Paket Terstruktur -->
-        <div class="detail-specs-grid">
+        <div class="detail-specs-grid" style="margin-block: 0.5rem;">
           <div class="spec-item">
-            <div class="spec-icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
-            </div>
-            <div class="spec-content">
-              <span class="spec-label">Durasi Perjalanan</span>
-              <span class="spec-val">${escapeHtml(pkg.duration)}</span>
-            </div>
+            <span class="spec-label">Durasi Waktu</span>
+            <span class="spec-value">${escapeHtml(pkg.duration)}</span>
           </div>
-
           <div class="spec-item">
-            <div class="spec-icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-            </div>
-            <div class="spec-content">
-              <span class="spec-label">Destinasi Utama</span>
-              <span class="spec-val">${escapeHtml(pkg.location)}</span>
-            </div>
+            <span class="spec-label">Kategori Trip</span>
+            <span class="spec-value">${escapeHtml(pkg.categoryLabel)}</span>
           </div>
-
           <div class="spec-item spec-span-2">
-            <div class="spec-icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-            </div>
-            <div class="spec-content">
-              <span class="spec-label">Titik Kumpul (Meeting Point)</span>
-              <span class="spec-val">${escapeHtml(pkg.meetingPoint)}</span>
-            </div>
+            <span class="spec-label">Titik Kumpul (Meeting Point)</span>
+            <span class="spec-value">${escapeHtml(pkg.meetingPoint)}</span>
           </div>
         </div>
 
-        <!-- Bagian Harga & Reservasi WhatsApp -->
-        <div class="detail-pricing-box">
-          <div class="pricing-info">
-            <span class="pricing-sublabel">Estimasi Biaya Paket</span>
-            <div class="pricing-figure-row">
-              <span class="pricing-amount">${escapeHtml(pkg.price)}</span>
-              <span class="pricing-unit">${escapeHtml(pkg.priceUnit)}</span>
-            </div>
-            <p class="pricing-disclaimer">*Biaya dapat disesuaikan dengan kuota rombongan aktual atau upgrade layanan.</p>
-          </div>
-
-          <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="detail-wa-btn" aria-label="Konsultasi & Reservasi Paket ${escapeHtml(pkg.title)} via WhatsApp">
-            <svg width="20" height="20" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.8 0-7.8 1.4-11.9 6.2-4.1 4.8-15.7 15.3-15.7 37.3 0 22 16 43.3 18.2 46.3 2.2 3 31.5 48.1 76.3 67.5 10.7 4.6 19 7.4 25.5 9.5 10.7 3.4 20.4 2.9 28.1 1.8 8.6-1.3 26.5-10.8 30.2-21.3 3.7-10.4 3.7-19.4 2.6-21.3-1.1-1.9-4.1-3-8.6-5.2z"/></svg>
-            <span>Konsultasi &amp; Reservasi via WhatsApp</span>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. Layout Dua Kolom Bawah (Konten Utama ~70% & Sidebar ~30%) -->
-    <div class="detail-body-layout">
-      <!-- Kolom Konten Utama -->
-      <div class="detail-main-stream">
-        <!-- Section A: Deskripsi Perjalanan -->
-        <section class="detail-panel-section" aria-labelledby="heading-desc">
-          <h2 id="heading-desc" class="detail-panel-title">Deskripsi Perjalanan</h2>
-          <p class="detail-body-prose">${escapeHtml(pkg.description)}</p>
-
-          <h3 class="detail-panel-subtitle">Highlight Pengalaman</h3>
+        <div class="detail-panel-section">
+          <h4 class="detail-panel-title">Deskripsi &amp; Pengalaman</h4>
+          <p class="detail-body-prose" style="margin-bottom: 1rem;">
+            ${escapeHtml(pkg.description)}
+          </p>
           <ul class="detail-feature-list">
             ${highlightsHtml}
           </ul>
-        </section>
+        </div>
 
-        <!-- Section B: Rencana Perjalanan (Itinerary) -->
-        <section class="detail-panel-section" aria-labelledby="heading-itinerary">
-          <div class="panel-header-flex">
-            <h2 id="heading-itinerary" class="detail-panel-title">Rencana Perjalanan (Itinerary)</h2>
-            <span class="itinerary-count-pill">${(pkg.itinerary || []).length} Agenda Terjadwal</span>
-          </div>
+        <div class="detail-panel-section">
+          <h4 class="detail-panel-title">Rencana Perjalanan (Itinerary)</h4>
           <div class="detail-vertical-timeline">
-            ${itineraryHtml}
+            ${timelineHtml}
           </div>
-        </section>
+        </div>
 
-        <!-- Section C: Fasilitas & Layanan -->
-        <section class="detail-panel-section" aria-labelledby="heading-facilities">
-          <h2 id="heading-facilities" class="detail-panel-title">Fasilitas &amp; Layanan</h2>
-          <div class="facilities-comparison-grid">
-            <div class="facilities-box box-included">
-              <div class="facilities-box-head">
-                <div class="box-icon icon-include" aria-hidden="true">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </div>
-                <h3>Termasuk dalam Paket</h3>
-              </div>
-              <ul class="facilities-entry-list">
+        <div class="detail-panel-section">
+          <h4 class="detail-panel-title">Fasilitas Perjalanan</h4>
+          <div class="facilities-grid">
+            <div class="facilities-col">
+              <h5 class="facilities-heading" style="color: #2F614E;">Sudah Termasuk (Include):</h5>
+              <ul class="facilities-list">
                 ${includesHtml}
               </ul>
             </div>
-
-            <div class="facilities-box box-excluded">
-              <div class="facilities-box-head">
-                <div class="box-icon icon-exclude" aria-hidden="true">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </div>
-                <h3>Tidak Termasuk</h3>
-              </div>
-              <ul class="facilities-entry-list">
+            <div class="facilities-col">
+              <h5 class="facilities-heading" style="color: #A34E36;">Tidak Termasuk (Exclude):</h5>
+              <ul class="facilities-list">
                 ${excludesHtml}
               </ul>
             </div>
           </div>
-        </section>
+        </div>
 
-        <!-- Section D: Tips & Persiapan Perjalanan -->
-        <section class="detail-panel-section" aria-labelledby="heading-preparation">
-          <h2 id="heading-preparation" class="detail-panel-title">Tips &amp; Persiapan Perjalanan</h2>
-          <ul class="preparation-tips-list">
-            ${preparationHtml}
-          </ul>
-          ${pkg.note ? `
-            <div class="detail-notice-box">
-              <div class="notice-box-icon" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-              </div>
-              <div class="notice-box-content">
-                <strong>Catatan Penting</strong>
-                <p>${escapeHtml(pkg.note)}</p>
-              </div>
+        ${prepHtml ? `
+          <div class="detail-panel-section">
+            <h4 class="detail-panel-title">Tips &amp; Perlengkapan yang Perlu Disiapkan</h4>
+            <ul class="preparation-list">
+              ${prepHtml}
+            </ul>
+          </div>
+        ` : ''}
+
+        ${pkg.note ? `
+          <div class="detail-notice-box">
+            <svg class="notice-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <div class="notice-text">
+              <strong>Catatan Penting:</strong> ${escapeHtml(pkg.note)}
             </div>
-          ` : ''}
-        </section>
-      </div>
-
-      <!-- Kolom Sidebar -->
-      <aside class="detail-sidebar-stream">
-        <!-- Panel A: Butuh Tanya-tanya Dulu? -->
-        <div class="sidebar-help-widget">
-          <div class="widget-icon-head" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
           </div>
-          <h3 class="widget-title">Butuh Tanya-tanya Dulu?</h3>
-          <p class="widget-desc">Admin trip kami siap membantu menyesuaikan jadwal kereta, penjemputan stasiun, atau sewa perlengkapan tambahan.</p>
-          
-          <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="sidebar-action-wa">
-            <svg width="18" height="18" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.8 0-7.8 1.4-11.9 6.2-4.1 4.8-15.7 15.3-15.7 37.3 0 22 16 43.3 18.2 46.3 2.2 3 31.5 48.1 76.3 67.5 10.7 4.6 19 7.4 25.5 9.5 10.7 3.4 20.4 2.9 28.1 1.8 8.6-1.3 26.5-10.8 30.2-21.3 3.7-10.4 3.7-19.4 2.6-21.3-1.1-1.9-4.1-3-8.6-5.2z"/></svg>
-            <span>Chat Admin Trip</span>
-          </a>
-          
-          <a href="kontak.html" class="sidebar-action-secondary">
-            <span>Lihat Form Pertanyaan</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </a>
-        </div>
+        ` : ''}
+      `;
+    }
 
-        <!-- Panel B: Paket Lainnya -->
-        <div class="sidebar-recommend-widget">
-          <div class="recommend-head-row">
-            <h3 class="recommend-title">Paket Lainnya</h3>
-            <span class="recommend-tag">Pilihan Trip</span>
-          </div>
-          <ul class="recommend-packages-list">
-            ${Object.values(PACKAGES_DATA).filter(p => p.slug !== pkg.slug).map(other => `
-              <li class="recommend-item">
-                <a href="detail-paket.html?paket=${escapeHtml(other.slug)}" class="recommend-link">
-                  <div class="recommend-content">
-                    <h4 class="recommend-item-title">${escapeHtml(other.title)}</h4>
-                    <span class="recommend-item-meta">${escapeHtml(other.duration)}</span>
-                  </div>
-                  <div class="recommend-price-col">
-                    <span class="recommend-item-price">${escapeHtml(other.price)}</span>
-                    <svg class="recommend-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                  </div>
-                </a>
-              </li>
-            `).join('')}
-          </ul>
-          <a href="paket.html" class="sidebar-all-packages-link">
-            <span>Lihat Semua Paket Wisata</span>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-          </a>
-        </div>
-      </aside>
-    </div>
-  `;
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
 
-  // Interactive gallery thumbnail switcher
-  const thumbBtns = detailContainer.querySelectorAll('.gallery-thumb-btn');
-  const mainImg = detailContainer.querySelector('#detail-main-img');
-  if (thumbBtns.length > 0 && mainImg) {
-    thumbBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        thumbBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const targetSrc = btn.getAttribute('data-img-src');
-        if (targetSrc && mainImg.src !== targetSrc) {
-          mainImg.style.opacity = '0.6';
-          mainImg.src = targetSrc;
-          setTimeout(() => { mainImg.style.opacity = '1'; }, 160);
-        }
-      });
-    });
+  function closeModal() {
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('[data-open-package]');
+    if (trigger) {
+      e.preventDefault();
+      const slug = trigger.getAttribute('data-open-package');
+      if (slug) openPackage(slug);
+    }
+  });
+
+  closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModal();
+    }
+  });
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const pkgParam = urlParams.get('paket');
+  if (pkgParam && PACKAGES_DATA[pkgParam]) {
+    openPackage(pkgParam);
+  } else if (window.location.hash.startsWith('#paket-')) {
+    const hashSlug = window.location.hash.replace('#paket-', '');
+    if (PACKAGES_DATA[hashSlug]) {
+      openPackage(hashSlug);
+    }
   }
 }
 
@@ -943,7 +876,7 @@ function initPackageDetailRenderer() {
    9. GALERI LIGHTBOX (galeri.html)
    ========================================================================== */
 function initGalleryLightbox() {
-  const galleryGrid = document.querySelector('.gallery-interactive-grid');
+  const galleryGrid = document.querySelector('.gallery-biolink-grid, .gallery-interactive-grid');
   const lightboxModal = document.getElementById('gallery-lightbox');
   if (!galleryGrid || !lightboxModal) return;
 
@@ -955,8 +888,7 @@ function initGalleryLightbox() {
   const btnNext = lightboxModal.querySelector('.lightbox-next');
 
   let currentIndex = 0;
-  const galleryItems = Array.from(galleryGrid.querySelectorAll('.gallery-item'));
-
+  const galleryItems = Array.from(galleryGrid.querySelectorAll('.gallery-biolink-item, .gallery-item'));
   function openLightbox(index) {
     currentIndex = index;
     updateLightboxContent();
@@ -1103,12 +1035,12 @@ function initContactForm() {
 
     if (statusAlert) {
       statusAlert.innerHTML = `
-        <div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 1rem;">Pesan Konsultasi Berhasil Disiapkan!</div>
+        <div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 1rem;">Format Pesan Konsultasi Berhasil Disiapkan!</div>
         <p style="margin-bottom: 1rem; font-size: 0.875rem;">
-          Karena website ini berjalan di sisi klien (frontend statis), silakan klik tombol di bawah untuk melanjutkan dan mengirim pesan langsung ke WhatsApp admin kami.
+          Silakan klik tombol di bawah untuk langsung membuka obrolan dan mengirimkan detail pesanmu ke WhatsApp resmi admin kami.
         </p>
         <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp" style="display: inline-flex;">
-          <svg width="18" height="18" viewBox="0 0 448 512" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path fill="currentColor" d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
           Buka & Kirim Pesan di WhatsApp
         </a>
       `;
