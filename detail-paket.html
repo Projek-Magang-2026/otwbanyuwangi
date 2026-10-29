@@ -59,7 +59,7 @@
   <!-- ========================================================================
        MAIN CONTENT: DETAIL PAKET DINAMIS
        ======================================================================== -->
-  <main id="main-content" style="padding-top: var(--space-md); padding-bottom: var(--space-4xl);">
+  <main id="main-content" class="detail-page-main">
     <div class="container">
 
       <!-- Dynamic App Container yang dirender oleh js/script.js -->
@@ -74,8 +74,9 @@
         </noscript>
 
         <!-- Loading placeholder -->
-        <div style="padding: 3rem 0; text-align: center;">
-          <p class="text-muted" style="font-size: 1rem;">Memuat rincian paket perjalanan...</p>
+        <div class="detail-loading-state">
+          <div class="detail-loading-spinner" aria-hidden="true"></div>
+          <p>Memuat rincian paket perjalanan...</p>
         </div>
       </div>
 
