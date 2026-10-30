@@ -745,62 +745,113 @@ function initPackageModal() {
 
     if (modalBody) {
       modalBody.innerHTML = `
-        <div class="detail-header-tags">
-          <h3 id="modal-package-title" class="detail-title-main" style="margin-bottom: 0.5rem; font-size: clamp(1.35rem, 2.5vw, 1.85rem);">
-            ${escapeHtml(pkg.title)}
-          </h3>
-          <p class="detail-summary-lead" style="margin-bottom: 1.25rem;">
+        <!-- Hero Media Banner with Gradient Overlay & Price Badge -->
+        <div class="detail-hero-banner">
+          <img src="${escapeHtml(pkg.heroImage || pkg.image)}" alt="${escapeHtml(pkg.title)}" class="detail-hero-img" loading="eager" />
+          <div class="detail-hero-overlay"></div>
+          <div class="detail-hero-content">
+            <div class="detail-hero-chips">
+              <span class="detail-chip detail-chip-badge">${escapeHtml(pkg.categoryLabel || 'PAKET WISATA')}</span>
+              <span class="detail-chip detail-chip-loc">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>${escapeHtml(pkg.location || 'Banyuwangi')}</span>
+              </span>
+            </div>
+            <h2 id="modal-package-title" class="detail-title-main">
+              ${escapeHtml(pkg.title)}
+            </h2>
+            <div class="detail-hero-price-tag">
+              <span class="tag-label">Mulai dari</span>
+              <span class="tag-val">${escapeHtml(pkg.price)}</span>
+              <span class="tag-unit">${escapeHtml(pkg.priceUnit)}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Summary & Key Specs Pill Row -->
+        <div class="detail-section-intro">
+          <p class="detail-summary-lead">
             ${escapeHtml(pkg.summary)}
           </p>
+          <div class="detail-quick-specs">
+            <div class="quick-spec-card">
+              <div class="spec-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div class="spec-meta">
+                <span class="spec-label">Durasi Trip</span>
+                <span class="spec-val">${escapeHtml(pkg.duration)}</span>
+              </div>
+            </div>
+            <div class="quick-spec-card">
+              <div class="spec-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+              <div class="spec-meta">
+                <span class="spec-label">Tipe Perjalanan</span>
+                <span class="spec-val">${escapeHtml(pkg.categoryLabel)}</span>
+              </div>
+            </div>
+            <div class="quick-spec-card spec-full">
+              <div class="spec-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              </div>
+              <div class="spec-meta">
+                <span class="spec-label">Meeting Point</span>
+                <span class="spec-val">${escapeHtml(pkg.meetingPoint)}</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div style="border-radius: var(--radius-sm); overflow: hidden; max-height: 320px; aspect-ratio: 16/9; background-color: var(--color-deep-forest);">
-          <img src="${escapeHtml(pkg.heroImage || pkg.image)}" alt="${escapeHtml(pkg.title)}" style="width: 100%; height: 100%; object-fit: cover;" />
-        </div>
-
-        <div class="detail-specs-grid" style="margin-block: 0.5rem;">
-          <div class="spec-item">
-            <span class="spec-label">Durasi Waktu</span>
-            <span class="spec-value">${escapeHtml(pkg.duration)}</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">Kategori Trip</span>
-            <span class="spec-value">${escapeHtml(pkg.categoryLabel)}</span>
-          </div>
-          <div class="spec-item spec-span-2">
-            <span class="spec-label">Titik Kumpul (Meeting Point)</span>
-            <span class="spec-value">${escapeHtml(pkg.meetingPoint)}</span>
-          </div>
-        </div>
-
+        <!-- Deskripsi & Highlight Pengalaman -->
         <div class="detail-panel-section">
-          <h4 class="detail-panel-title">Deskripsi &amp; Pengalaman</h4>
-          <p class="detail-body-prose" style="margin-bottom: 1rem;">
+          <div class="panel-section-header">
+            <span class="panel-badge-num">01</span>
+            <h3 class="detail-panel-title">Pengalaman &amp; Daya Tarik</h3>
+          </div>
+          <p class="detail-body-prose">
             ${escapeHtml(pkg.description)}
           </p>
-          <ul class="detail-feature-list">
-            ${highlightsHtml}
-          </ul>
+          ${highlightsHtml ? `
+            <ul class="detail-feature-list">
+              ${highlightsHtml}
+            </ul>
+          ` : ''}
         </div>
 
+        <!-- Rencana Perjalanan (Itinerary) -->
         <div class="detail-panel-section">
-          <h4 class="detail-panel-title">Rencana Perjalanan (Itinerary)</h4>
+          <div class="panel-section-header">
+            <span class="panel-badge-num">02</span>
+            <h3 class="detail-panel-title">Rencana Perjalanan (Itinerary)</h3>
+          </div>
           <div class="detail-vertical-timeline">
             ${timelineHtml}
           </div>
         </div>
 
+        <!-- Fasilitas Perjalanan (Include & Exclude) -->
         <div class="detail-panel-section">
-          <h4 class="detail-panel-title">Fasilitas Perjalanan</h4>
+          <div class="panel-section-header">
+            <span class="panel-badge-num">03</span>
+            <h3 class="detail-panel-title">Fasilitas Perjalanan</h3>
+          </div>
           <div class="facilities-grid">
-            <div class="facilities-col">
-              <h5 class="facilities-heading" style="color: #2F614E;">Sudah Termasuk (Include):</h5>
+            <div class="facilities-col facilities-include">
+              <div class="facilities-col-title">
+                <span class="pill-dot green"></span>
+                <span>Sudah Termasuk (Include)</span>
+              </div>
               <ul class="facilities-list">
                 ${includesHtml}
               </ul>
             </div>
-            <div class="facilities-col">
-              <h5 class="facilities-heading" style="color: #A34E36;">Tidak Termasuk (Exclude):</h5>
+            <div class="facilities-col facilities-exclude">
+              <div class="facilities-col-title">
+                <span class="pill-dot red"></span>
+                <span>Belum Termasuk (Exclude)</span>
+              </div>
               <ul class="facilities-list">
                 ${excludesHtml}
               </ul>
@@ -808,26 +859,33 @@ function initPackageModal() {
           </div>
         </div>
 
+        <!-- Tips & Perlengkapan -->
         ${prepHtml ? `
           <div class="detail-panel-section">
-            <h4 class="detail-panel-title">Tips &amp; Perlengkapan yang Perlu Disiapkan</h4>
+            <div class="panel-section-header">
+              <span class="panel-badge-num">04</span>
+              <h3 class="detail-panel-title">Perlengkapan &amp; Tips Wisata</h3>
+            </div>
             <ul class="preparation-list">
               ${prepHtml}
             </ul>
           </div>
         ` : ''}
 
+        <!-- Catatan Penting -->
         ${pkg.note ? `
           <div class="detail-notice-box">
-            <svg class="notice-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <div class="notice-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
             <div class="notice-text">
-              <strong>Catatan Penting:</strong> ${escapeHtml(pkg.note)}
+              <strong class="notice-heading">Catatan Penting</strong>
+              <p>${escapeHtml(pkg.note)}</p>
             </div>
           </div>
         ` : ''}
       `;
     }
-
     modal.classList.add('active');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
