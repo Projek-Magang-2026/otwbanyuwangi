@@ -950,6 +950,53 @@ function initGalleryLightbox() {
     if (e.key === 'ArrowLeft') showPrev();
   });
 
+  // Navigasi sentuh (touch swipe) pada mode mobile
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchEndX = 0;
+  let touchEndY = 0;
+  const minSwipeDistance = 40; // Jarak minimal swipe dalam px
+
+  function getCoords(e) {
+    if (e.changedTouches && e.changedTouches.length > 0) {
+      return {
+        x: e.changedTouches[0].clientX || e.changedTouches[0].screenX,
+        y: e.changedTouches[0].clientY || e.changedTouches[0].screenY
+      };
+    }
+    return { x: e.clientX || 0, y: e.clientY || 0 };
+  }
+
+  lightboxModal.addEventListener('touchstart', (e) => {
+    const c = getCoords(e);
+    touchStartX = c.x;
+    touchStartY = c.y;
+  }, { passive: true });
+
+  lightboxModal.addEventListener('touchend', (e) => {
+    if (!lightboxModal.classList.contains('active')) return;
+    const c = getCoords(e);
+    touchEndX = c.x;
+    touchEndY = c.y;
+    handleSwipe();
+  }, { passive: true });
+
+  function handleSwipe() {
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+
+    // Pastikan gestur lebih horizontal daripada vertikal
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) >= minSwipeDistance) {
+      if (diffX < 0) {
+        // Geser ke kiri -> Foto berikutnya
+        showNext();
+      } else {
+        // Geser ke kanan -> Foto sebelumnya
+        showPrev();
+      }
+    }
+  }
+
   const galleryFilters = document.querySelectorAll('.gallery-filter-btn');
   galleryFilters.forEach(btn => {
     btn.addEventListener('click', () => {
